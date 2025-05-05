@@ -1,0 +1,35 @@
+.search-box {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 30px;
+    padding: 0.3rem 0.8rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+    margin-right: 0.5rem;
+
+    input {
+        width: 150px;
+        border: none;
+        background: transparent;
+        padding: 0.4rem;
+        font-size: 0.9rem;
+        outline: none;
+        color: #333;
+
+        &::placeholder {
+            color: #777;
+        }
+    }
+
+    button {
+        background: transparent;
+        border: none;
+        color: rgb(221, 0, 0);
+        cursor: pointer;
+        padding: 0.3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+    }
+}

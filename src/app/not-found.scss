@@ -1,0 +1,68 @@
+.not-found-container {
+    max-width: 1200px;
+    margin: 4rem auto;
+    padding: 2rem;
+    text-align: center;
+    
+    h1 {
+        font-size: 8rem;
+        font-weight: 700;
+        color: rgb(221, 0, 0);
+        margin: 0;
+        line-height: 1;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    h2 {
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: #333;
+        margin: 1rem 0;
+    }
+    
+    p {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .back-button {
+        display: inline-block;
+        background-color: rgb(221, 0, 0);
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        
+        &:hover {
+            background-color:rgb(221, 0, 0);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(221, 0, 0, 0.3);
+        }
+    }
+}
+
+// Адаптивность для мобильных устройств
+@media (max-width: 767px) {
+    .not-found-container {
+        margin: 2rem auto;
+        padding: 1rem;
+        
+        h1 {
+            font-size: 6rem;
+        }
+        
+        h2 {
+            font-size: 2rem;
+        }
+        
+        p {
+            font-size: 1rem;
+        }
+    }
+}
