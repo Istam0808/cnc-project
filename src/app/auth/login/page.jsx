@@ -2,13 +2,19 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../../firebase/config';
+import { useRouter } from 'next/navigation';
 import '../style.scss';
 
 function Login() {
+    const router = useRouter();
     const [formData, setFormData] = useState({
         email: '',
         password: ''
     });
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -18,10 +24,38 @@ function Login() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Здесь будет логика авторизации
-        console.log('Login attempt with:', formData);
+        setError('');
+        setLoading(true);
+        
+        try {
+            await signInWithEmailAndPassword(auth, formData.email, formData.password);
+            // Успешный вход, перенаправление на главную страницу
+            router.push('/explore');
+        } catch (error) {
+            // Обработка ошибок аутентификации
+            let errorMessage = 'Произошла ошибка при входе';
+            
+            switch (error.code) {
+                case 'auth/invalid-email':
+                    errorMessage = 'Неверный формат электронной почты';
+                    break;
+                case 'auth/user-disabled':
+                    errorMessage = 'Этот аккаунт отключен';
+                    break;
+                case 'auth/user-not-found':
+                case 'auth/wrong-password':
+                    errorMessage = 'Неверный email или пароль';
+                    break;
+                default:
+                    errorMessage = `Ошибка: ${error.message}`;
+            }
+            
+            setError(errorMessage);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -38,6 +72,8 @@ function Login() {
                         Введите ваши данные для входа в личный кабинет
                     </p>
 
+                    {error && <div className="auth-error">{error}</div>}
+
                     <form className="auth-form" onSubmit={handleSubmit}>
                         <div className="form-group">
                             <label htmlFor="email">Email</label>
@@ -49,6 +85,7 @@ function Login() {
                                 onChange={handleChange}
                                 placeholder="Введите ваш email"
                                 required
+                                disabled={loading}
                             />
                         </div>
 
@@ -62,6 +99,7 @@ function Login() {
                                 onChange={handleChange}
                                 placeholder="Введите ваш пароль"
                                 required
+                                disabled={loading}
                             />
                         </div>
 
@@ -75,8 +113,8 @@ function Login() {
                             </Link>
                         </div>
 
-                        <button type="submit" className="auth-button">
-                            Войти
+                        <button type="submit" className="auth-button" disabled={loading}>
+                            {loading ? 'Вход...' : 'Войти'}
                         </button>
                     </form>
 
