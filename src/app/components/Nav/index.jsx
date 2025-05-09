@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { FaHome, FaInfoCircle, FaPhoneAlt, FaShoppingBag, FaChevronDown } from 'react-icons/fa';
+import { FaHome, FaInfoCircle, FaPhoneAlt, FaShoppingBag, FaChevronDown , FaSignInAlt} from 'react-icons/fa';
 import { useState, useRef, useEffect } from 'react';
 import Logo from '../../../assets/images/logo.png';
 import './style.scss';
@@ -94,6 +94,7 @@ export default function Nav() {
           </div>
         </div>
         <Link href='/auth/login'>
+          <FaSignInAlt className="icon" />
           Логин
         </Link>
       </div>
