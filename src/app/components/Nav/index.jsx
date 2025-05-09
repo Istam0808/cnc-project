@@ -7,7 +7,6 @@ import { FaHome, FaInfoCircle, FaPhoneAlt, FaShoppingBag, FaChevronDown } from '
 import { useState, useRef, useEffect } from 'react';
 import Logo from '../../../assets/images/logo.png';
 import './style.scss';
-import Searchbox from '../Searchbox';
 
 export default function Nav() {
   const pathname = usePathname();
@@ -53,7 +52,6 @@ export default function Nav() {
         </div>
       </div>
       <div className="right" >
-        <Searchbox />
         <Link href="/explore" className={pathname === '/explore' ? 'active' : ''}>
           <FaHome className="icon" />
           Главная
@@ -66,13 +64,13 @@ export default function Nav() {
           <FaPhoneAlt className="icon" />
           Контакты
         </Link>
-        <div 
+        <div
           className={`dropdown-container ${pathname.startsWith('/brands') ? 'active' : ''}`}
           ref={dropdownRef}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <Link 
+          <Link
             href="/brands"
             className={`dropdown-trigger ${pathname === '/brands' ? 'active' : ''}`}
           >
@@ -85,9 +83,9 @@ export default function Nav() {
               Все бренды
             </Link>
             {brands.map((brand, index) => (
-              <Link 
-                key={index} 
-                href={brand.path} 
+              <Link
+                key={index}
+                href={brand.path}
                 className={pathname === brand.path ? 'active' : ''}
               >
                 {brand.name}
@@ -95,6 +93,9 @@ export default function Nav() {
             ))}
           </div>
         </div>
+        <Link href='/auth/login'>
+          Логин
+        </Link>
       </div>
     </div>
   );
