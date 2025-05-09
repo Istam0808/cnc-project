@@ -1,0 +1,210 @@
+.terms-container {
+    max-width: 1500px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.9rem;
+        color: #333;
+    }
+    
+    .breadcrumbs {
+        font-weight: bold;
+        margin-bottom: 2rem;
+        font-size: 0.9rem;
+        color: #777;
+        
+        a {
+            color: #333;
+            text-decoration: none;
+            
+            &:hover {
+                color: rgb(221, 0, 0);
+                text-decoration: underline;
+            }
+        }
+    }
+    
+    .terms-content {
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+        
+        section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            
+            &.animate {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    }
+    
+    .terms-intro {
+        background-color: #f9f9f9;
+        padding: 2.5rem;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        
+        .intro-icon {
+            font-size: 3.5rem;
+            color: rgb(221, 0, 0);
+            margin-bottom: 1.5rem;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #444;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+    }
+    
+    .terms-section {
+        background-color: #fff;
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        position: relative;
+        
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: #333;
+            position: relative;
+            padding-bottom: 0.8rem;
+            
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 60px;
+                height: 3px;
+                background-color: rgb(221, 0, 0);
+            }
+        }
+        
+        .section-icon {
+            position: absolute;
+            top: 2.5rem;
+            right: 2.5rem;
+            font-size: 2.5rem;
+            color: rgba(221, 0, 0, 0.15);
+        }
+        
+        .section-content {
+            p {
+                font-size: 1.1rem;
+                line-height: 1.6;
+                color: #555;
+                margin-bottom: 1.2rem;
+            }
+            
+            ul {
+                margin-left: 1.5rem;
+                margin-bottom: 1.5rem;
+                
+                li {
+                    font-size: 1.1rem;
+                    line-height: 1.6;
+                    color: #555;
+                    margin-bottom: 0.5rem;
+                }
+            }
+            
+            .contact-info {
+                background-color: #f9f9f9;
+                padding: 1.5rem;
+                border-radius: 8px;
+                margin-top: 1.5rem;
+                
+                p {
+                    margin-bottom: 0.5rem;
+                    
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        }
+    }
+    
+    .terms-footer {
+        text-align: center;
+        margin-top: 1rem;
+        
+        p {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 1rem;
+        }
+        
+        .related-link {
+            display: inline-block;
+            background-color: rgb(221, 0, 0);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            
+            &:hover {
+                background-color: darken(rgb(221, 0, 0), 10%);
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(221, 0, 0, 0.3);
+            }
+        }
+    }
+    
+    // Адаптивность для мобильных устройств
+    @media (max-width: 767px) {
+        margin: 1rem auto;
+        
+        h1 {
+            font-size: 2rem;
+        }
+        
+        .terms-intro {
+            padding: 1.5rem;
+            
+            .intro-icon {
+                font-size: 2.5rem;
+            }
+            
+            p {
+                font-size: 1rem;
+            }
+        }
+        
+        .terms-section {
+            padding: 1.5rem;
+            
+            h2 {
+                font-size: 1.5rem;
+                padding-right: 2.5rem;
+            }
+            
+            .section-icon {
+                font-size: 1.8rem;
+                top: 1.5rem;
+                right: 1.5rem;
+            }
+            
+            .section-content {
+                p, ul li {
+                    font-size: 1rem;
+                }
+            }
+        }
+    }
+}
