@@ -45,14 +45,13 @@ a {
 }
 
 /* Добавляем стили для правильного расположения футера */
+// Добавьте следующие стили
 .page-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  padding-top: 90px; /* Высота Nav бара + дополнительный отступ */
 }
 
 .content-wrap {
-  flex: 1 0 auto;
+  min-height: calc(100vh - 90px); /* Вычитаем высоту Nav бара */
 }
 
 .button {

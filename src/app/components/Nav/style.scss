@@ -6,9 +6,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.985);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  position: sticky;
+  position: fixed; /* Изменено с sticky на fixed */
   top: 0;
   z-index: 100;
   width: 100%;
@@ -16,6 +16,7 @@
   border-radius: 0 0 16px 16px;
 
   .left {
+    flex: 0 0 20%;
     .logo {
       display: flex;
       align-items: center;
@@ -33,6 +34,7 @@
   .right {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 1.2rem;
     background-color: rgba(240, 240, 240, 0.7);
     padding: 0.7rem 1.2rem;
@@ -40,8 +42,6 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     margin-right: 20px;
     
-
-
     a {
       display: flex;
       align-items: center;
@@ -61,7 +61,7 @@
         left: 50%;
         width: 0;
         height: 2px;
-        background-color: rgb(221, 0, 0);;
+        background-color: rgb(221, 0, 0);
         transition: all 0.3s ease;
         transform: translateX(-50%);
       }
@@ -73,7 +73,7 @@
       }
 
       &:hover {
-        color: rgb(221, 0, 0);;
+        color: rgb(221, 0, 0);
         background-color: rgba(243, 0, 0, 0.08);
 
         .icon {
@@ -88,8 +88,8 @@
       &.active {
         color: #ffffff;
         font-weight: 600;
-        background-color: rgb(221, 0, 0);;
-        box-shadow: 0 4px 10px rgba(0, 112, 243, 0.3);
+        background-color: rgb(221, 0, 0);
+        box-shadow: 0 4px 10px rgba(221, 0, 0, 0.3);
 
         .icon {
           color: #ffffff;
@@ -99,22 +99,45 @@
           width: 0;
         }
       }
+      
+      &.profile-link {
+        display: flex;
+        align-items: center;
+        
+        .profile-icon {
+          margin-right: 0.5rem;
+          font-size: 1.2rem;
+          transition: transform 0.3s ease;
+        }
+        
+        &:hover {
+          .profile-icon {
+            transform: translateY(-2px);
+          }
+        }
+        
+        &.active {
+          .profile-icon {
+            color: #ffffff;
+          }
+        }
+      }
     }
   }
 }
 
 // Адаптивность для мобильных устройств
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .nav-container {
     flex-direction: column;
     padding: 1rem;
 
     .left {
       flex: 0 0 100%;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
 
       .logo {
-        transform: scale(1.2);
+        transform: scale(1.1);
         transform-origin: center;
         margin: 0 auto;
         margin-left: 0;
@@ -125,24 +148,21 @@
       }
     }
 
+    .middle {
+      flex: 0 0 100%;
+      margin-bottom: 1rem;
+      width: 90%;
+    }
+
     .right {
-      flex-direction: column;
+      flex: 0 0 100%;
+      flex-wrap: wrap;
       width: 90%;
       margin: 0 auto;
       padding: 1rem;
+      justify-content: center;
       
-      .search-box {
-        width: 100%;
-        margin-bottom: 1rem;
-        
-        input {
-          width: 100%;
-        }
-      }
-
       a {
-        width: 100%;
-        justify-content: center;
         margin-bottom: 0.5rem;
         font-size: 0.9rem;
         padding: 0.4rem 0.7rem;

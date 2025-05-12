@@ -159,7 +159,7 @@
             transition: all 0.3s ease;
             
             &:hover {
-                background-color: darken(rgb(221, 0, 0), 10%);
+                background-color: #990000;
                 transform: translateY(-3px);
                 box-shadow: 0 5px 15px rgba(221, 0, 0, 0.3);
             }
