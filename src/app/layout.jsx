@@ -1,5 +1,5 @@
 import '../assets/styles/globals.scss';
-import Header from './components/Nav';
+import Nav from './components/Nav';
 import Footer from './components/Footer';
 
 export const metadata = {
@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ru">
       <body>
-        <Header />
+        <Nav />
         <div className='page-container'>
           <main
             className='content-wrap'>
