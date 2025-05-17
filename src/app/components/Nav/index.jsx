@@ -7,38 +7,16 @@ import { FaHome, FaInfoCircle, FaPhoneAlt, FaShoppingBag, FaChevronDown, FaSignI
 import { useState, useRef, useEffect } from 'react';
 import Logo from '../../../assets/images/logo.png';
 import './style.scss';
+import { useAuth } from '../../../context/AuthContext';
+import { useRouter } from 'next/navigation';
 
-export default function Nav() {
+function Nav() {
+  const router = useRouter();
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const dropdownRef = useRef(null);
   const timeoutRef = useRef(null);
-
-  useEffect(() => {
-    // Проверка авторизации пользователя
-    const checkUserAuth = () => {
-      const userData = localStorage.getItem('user');
-      setIsLoggedIn(!!userData);
-    };
-    
-    // Проверяем при монтировании
-    checkUserAuth();
-    
-    // Добавляем слушатель для отслеживания изменений в localStorage
-    window.addEventListener('storage', checkUserAuth);
-    
-    // Также можно создать собственное событие для обновления состояния
-    const handleCustomAuth = () => checkUserAuth();
-    window.addEventListener('userLogin', handleCustomAuth);
-    window.addEventListener('userLogout', handleCustomAuth);
-    
-    return () => {
-      window.removeEventListener('storage', checkUserAuth);
-      window.removeEventListener('userLogin', handleCustomAuth);
-      window.removeEventListener('userLogout', handleCustomAuth);
-    };
-  }, []);
+  const { user } = useAuth();
 
   // Обработчики для hover эффекта
   const handleMouseEnter = () => {
@@ -120,18 +98,19 @@ export default function Nav() {
             ))}
           </div>
         </div>
-        {isLoggedIn ? (
-          <Link href='/profile' className={pathname === '/profile' ? 'active' : ''}>
-            <FaUser className="icon" />
-            Профиль
-          </Link>
-        ) : (
-          <Link href='/auth/login' className={pathname === '/auth/login' ? 'active' : ''}>
-            <FaSignInAlt className="icon" />
-            Войти
-          </Link>
+        {user ? ( 
+          <Link href="/profile" className={pathname === '/profile' ? 'active' : ''}> 
+            <FaUser className="icon" /> 
+            Профиль 
+          </Link> 
+        ) : ( 
+          <Link href="/auth/login" className={pathname === '/auth/login' ? 'active' : ''}> 
+            <FaSignInAlt className="icon" /> 
+            Войти 
+          </Link> 
         )}
       </div>
     </div>
   );
 }
+export default Nav;

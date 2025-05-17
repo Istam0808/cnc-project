@@ -1,139 +1,181 @@
 'use client';
-
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../../firebase/config';
-import '../style.scss';
+import { FaGoogle, FaFacebook } from 'react-icons/fa';
+import './style.scss';
+import { loginUser, loginWithGoogle, loginWithFacebook } from '../../../firebase/auth';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.email) {
+      newErrors.email = 'Email обязателен';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Неверный формат email';
+    }
+    
+    if (!formData.password) {
+      newErrors.password = 'Пароль обязателен';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     
-    if (!email || !password) {
-      setError('Пожалуйста, заполните все поля');
+    if (!validateForm()) {
       return;
     }
     
-    setLoading(true);
+    setIsLoading(true);
+    setError('');
     
     try {
-      // Аутентификация через Firebase
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      
-      // Сохраняем базовую информацию о пользователе в localStorage для быстрого доступа
-      // (это опционально, так как Firebase хранит состояние сессии)
-      localStorage.setItem('user', JSON.stringify({
-        name: user.displayName || 'Пользователь',
-        email: user.email,
-        uid: user.uid
-      }));
-      
-      // Создаем пользовательское событие для обновления состояния в Nav
-      window.dispatchEvent(new Event('userLogin'));
-      
-      // Перенаправляем на страницу профиля
+      await loginUser(formData.email, formData.password);
       router.push('/profile');
     } catch (error) {
-      // Обработка ошибок Firebase
-      let errorMessage = 'Произошла ошибка при входе';
-      
-      switch (error.code) {
-        case 'auth/invalid-email':
-          errorMessage = 'Неверный формат электронной почты';
-          break;
-        case 'auth/user-disabled':
-          errorMessage = 'Этот аккаунт отключен';
-          break;
-        case 'auth/user-not-found':
-          errorMessage = 'Пользователь с таким email не найден';
-          break;
-        case 'auth/wrong-password':
-          errorMessage = 'Неверный пароль';
-          break;
-        default:
-          errorMessage = `Ошибка: ${error.message}`;
+      console.error('Ошибка при входе:', error);
+      if (error.code === 'auth/network-request-failed') {
+        setError('Проблема с подключением к сети. Пожалуйста, проверьте ваше интернет-соединение.');
+      } else {
+        setError(error.message || 'Ошибка при входе. Пожалуйста, попробуйте снова.');
       }
-      
-      setError(errorMessage);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      await loginWithGoogle();
+      router.push('/profile');
+    } catch (error) {
+      console.error('Ошибка при входе через Google:', error);
+      setError('Ошибка при входе через Google');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFacebookLogin = async () => {
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      await loginWithFacebook();
+      router.push('/profile');
+    } catch (error) {
+      console.error('Ошибка при входе через Facebook:', error);
+      setError('Ошибка при входе через Facebook');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="auth-container">
-      <h1>Авторизация</h1>
+      <h1>Вход в аккаунт</h1>
       
       <div className="breadcrumbs">
-        <Link href="/explore">Главная</Link> / Авторизация
+        <Link href="/explore">Главная</Link> / Вход
       </div>
       
       <div className="auth-content">
-        <div className="auth-form-container">
-          <h2>Вход в аккаунт</h2>
-          <p className="form-description">
-            Введите свои данные для входа в систему
-          </p>
-          
-          {error && <div className="auth-error">{error}</div>}
-          
-          <form className="auth-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                placeholder="Введите ваш email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={loading}
-              />
-            </div>
+        <section className="animate">
+          <div className="auth-form-container">
+            <h2>Вход в систему</h2>
             
-            <div className="form-group">
-              <label htmlFor="password">Пароль</label>
-              <input
-                type="password"
-                id="password"
-                placeholder="Введите ваш пароль"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={loading}
-              />
-            </div>
+            {error && <div className="error-message">{error}</div>}
             
-            <div className="form-options">
-              <div className="remember-me">
-                <input type="checkbox" id="remember" />
-                <label htmlFor="remember">Запомнить меня</label>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Введите ваш email"
+                />
+                {errors.email && <div className="error-message">{errors.email}</div>}
               </div>
               
-              <Link href="/auth/forgot-password" className="forgot-password">
-                Забыли пароль?
-              </Link>
+              <div className="form-group">
+                <label htmlFor="password">Пароль</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Введите ваш пароль"
+                />
+                {errors.password && <div className="error-message">{errors.password}</div>}
+                <div className="forgot-password">
+                  <Link href="/auth/reset-password">Забыли пароль?</Link>
+                </div>
+              </div>
+              
+              <button 
+                type="submit" 
+                className="auth-button"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Вход...' : 'Войти'}
+              </button>
+            </form>
+            
+            <div className="divider">
+              <span>или</span>
             </div>
             
-            <button type="submit" className="auth-button" disabled={loading}>
-              {loading ? 'Вход...' : 'Войти'}
-            </button>
-          </form>
-          
-          <div className="auth-footer">
-            Нет аккаунта? <Link href="/auth/register">Зарегистрироваться</Link>
+            <div className="social-login">
+              <button 
+                className="social-button" 
+                onClick={handleGoogleLogin}
+                disabled={isLoading}
+              >
+                <FaGoogle className="icon" /> Google
+              </button>
+              <button 
+                className="social-button"
+                onClick={handleFacebookLogin}
+                disabled={isLoading}
+              >
+                <FaFacebook className="icon" /> Facebook
+              </button>
+            </div>
+            
+            <div className="login-links">
+              Нет аккаунта? <Link href="/auth/register">Зарегистрироваться</Link>
+            </div>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );

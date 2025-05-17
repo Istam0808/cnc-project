@@ -3,103 +3,97 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth } from '../../firebase/config.js';
+import { FaUser, FaEnvelope, FaSignOutAlt, FaEdit } from 'react-icons/fa';
 import './style.scss';
+import { useAuth } from '../../context/AuthContext';
+import { logoutUser } from '../../firebase/auth';
 
 export default function Profile() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { user, loading } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(null);
 
   useEffect(() => {
-    // Используем Firebase для проверки состояния аутентификации
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        // Пользователь авторизован
-        setUser({
-          name: currentUser.displayName || 'Пользователь',
-          email: currentUser.email,
-          uid: currentUser.uid,
-          phone: currentUser.phoneNumber,
-          photoURL: currentUser.photoURL
-        });
-      } else {
-        // Пользователь не авторизован, перенаправляем на страницу входа
-        router.push('/auth/login');
-      }
-      setLoading(false);
-    });
-    
-    // Отписываемся от слушателя при размонтировании компонента
-    return () => unsubscribe();
-  }, [router]);
+    if (!loading && !user) {
+      router.push('/auth/login');
+    }
+  }, [user, loading, router]);
+
+  // Устанавливаем аватар из данных пользователя
+  useEffect(() => {
+    if (user?.avatar) {
+      setAvatarUrl(user.avatar);
+    }
+  }, [user]);
 
   const handleLogout = async () => {
+    setIsLoading(true);
     try {
-      await signOut(auth);
-      localStorage.removeItem('user');
-      
-      // Создаем пользовательское событие для обновления состояния в Nav
-      window.dispatchEvent(new Event('userLogout'));
-      
+      await logoutUser();
       router.push('/explore');
     } catch (error) {
-      console.error('Ошибка при выходе из системы:', error);
+      console.error('Ошибка при выходе:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="profile-container">
-        <div className="profile-loading">Загрузка...</div>
-      </div>
-    );
+  if (loading || !user) {
+    return <div className="profile-container">Загрузка...</div>;
   }
 
   return (
     <div className="profile-container">
-      <h1>Личный кабинет</h1>
+      <h1>Профиль</h1>
       
       <div className="breadcrumbs">
-        <Link href="/explore">Главная</Link> / Личный кабинет
+        <Link href="/explore">Главная</Link> / Профиль
       </div>
       
       <div className="profile-content">
         <div className="profile-card">
           <div className="profile-header">
-            <div className="profile-avatar">
-              {user?.photoURL ? (
-                <img src={user.photoURL} alt="Аватар пользователя" />
-              ) : (
-                user?.name?.charAt(0) || 'U'
-              )}
+            <div 
+              className="profile-avatar"
+              style={{ 
+                backgroundImage: avatarUrl ? `url(${avatarUrl})` : 'none',
+                backgroundColor: avatarUrl ? 'transparent' : '#f0f0f0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              {!avatarUrl && (user?.name?.charAt(0) || <FaUser />)}
             </div>
-            <h2>Добро пожаловать, {user?.name || 'Пользователь'}!</h2>
+            <h2>{user.name}</h2>
           </div>
           
           <div className="profile-info">
             <div className="info-group">
-              <label>Имя:</label>
-              <p>{user?.name || 'Не указано'}</p>
-            </div>
-            
-            <div className="info-group">
-              <label>Email:</label>
-              <p>{user?.email || 'Не указано'}</p>
-            </div>
-            
-            {user?.phone && (
-              <div className="info-group">
-                <label>Телефон:</label>
-                <p>{user.phone}</p>
+              <div className="info-label">
+                <FaEnvelope className="info-icon" />
+                <span>Email:</span>
               </div>
-            )}
+              <div className="info-value">{user.email}</div>
+            </div>
+            
+            <div className="profile-actions">
+              <button className="edit-profile-button">
+                <FaEdit className="button-icon" />
+                Редактировать профиль
+              </button>
+              
+              <button 
+                className="logout-button" 
+                onClick={handleLogout}
+                disabled={isLoading}
+              >
+                <FaSignOutAlt className="button-icon" />
+                {isLoading ? 'Выход...' : 'Выйти'}
+              </button>
+            </div>
           </div>
-          
-          <button className="logout-button" onClick={handleLogout}>
-            Выйти из системы
-          </button>
         </div>
       </div>
     </div>
